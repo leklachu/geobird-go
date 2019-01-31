@@ -14,3 +14,6 @@
 # For using vim or emacs
 *.swp
 *~
+
+# Main binary file
+geobird 
