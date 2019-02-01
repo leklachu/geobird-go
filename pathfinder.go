@@ -2,14 +2,18 @@
 package main
 
 import (
-	// "net/http"
 	"net/url"
 	// "strconv"
 )
 
 // a struct with all the parameters
 type ImageSet struct {
-	_ int
+	satelliteLayers                []string
+	dates                          []Date
+	latMin, latMax, lonMin, lonMax string
+	width, height                  string
+	imageType                      string // jpeg/png
+	fileSchema                     Schema
 }
 
 // struct that represents individual image
@@ -17,8 +21,9 @@ type Image struct {
 	satelliteLayer                 string // full layer name? or satellite name?
 	latMin, latMax, lonMin, lonMax string // string easier to crib from worldview
 	width, height                  string // by which point... eh, just string
-	time                           string // or use d/m/y?
+	time                           Date   // for easy file handling
 	imageType                      string // jpeg/png
+	parent                         *ImageSet
 }
 
 // get Images from ImageSet; pipe them back through a channel
@@ -42,7 +47,7 @@ var i1 = Image{
 	lonMax:         "83.6982421875",
 	width:          "385",
 	height:         "272",
-	time:           "2018-01-29",
+	time:           Date{2018, 01, 29},
 	imageType:      "jpeg"}
 
 // Method to take image struct and give URL
@@ -56,7 +61,7 @@ func (i Image) getImageURL() url.URL {
 	query.Add("FORMAT", "image/"+i.imageType)
 	query.Add("HEIGHT", i.height)
 	query.Add("WIDTH", i.width)
-	query.Add("TIME", i.time)
+	query.Add("TIME", show(i.time))
 	query.Add("CRS", "EPSG:4326")
 	query.Add("BBox", i.latMin+","+i.lonMin+","+i.latMax+","+i.lonMax)
 	return url.URL{
