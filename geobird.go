@@ -5,11 +5,19 @@ Geobird is a tool for batch-downloading images from Nasa's earthdata.
 
 package main
 
-import "fmt"
+import (
+	"fmt"
+	// "net/http"
+)
 
 func main() {
 	// Work out the opts and choose images
 	// Construct urls to fetch, and paths to save
 	// Fetch urls and save as files
+
+	u := i1.getImageURL()
+	fmt.Println(u.String())
+	// f := i1.getImagePath()
+
 	fmt.Println("birdy!")
 }
