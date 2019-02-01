@@ -17,7 +17,11 @@ func main() {
 
 	u := i1.getImageURL()
 	fmt.Println(u.String())
-	// f := i1.getImagePath()
+	f := i1.getImagePath()
+
+	// image := getImage(u.String())
+	// saveImage(image, f)
+	getAndSaveImage(u.String(), f)
 
 	fmt.Println("birdy!")
 }
