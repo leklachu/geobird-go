@@ -40,7 +40,7 @@ func getAndSaveImage(url string, fileName string) {
 	if err != nil {
 		panic(err)
 	}
-	// defer resp.Body.Close()
+	defer resp.Body.Close()
 
 	// Get the body ready to write
 	imgBytes, err := ioutil.ReadAll(resp.Body)
