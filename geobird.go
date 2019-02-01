@@ -8,12 +8,29 @@ package main
 import (
 	"fmt"
 	// "net/http"
+	"net/url"
 )
 
 func main() {
 	// Work out the opts and choose images
+	options := parseCommandLineArguments()
+	// fmt.Println(options)
+
 	// Construct urls to fetch, and paths to save
+	imageSet := defaultImageSet
+	imageSet.fileSchema = DefaultScheme{options.outputDir}
+	imageSet.dates = dateRange(Date{2018, 1, 1}, Date{2018, 1, 31}, Period{0, 0, 1})
+
 	// Fetch urls and save as files
+	iChannel := make(chan Image)
+	go imageSet.getImages(iChannel)
+	var iURL url.URL
+	for img := range iChannel {
+		iURL = img.getImageURL()
+		fmt.Println("getting", iURL.String())
+		fmt.Println("and putting at", img.getImagePath())
+		getAndSaveImage(iURL.String(), img.getImagePath())
+	}
 
 	// u := i1.getImageURL()
 	// fmt.Println(u.String())

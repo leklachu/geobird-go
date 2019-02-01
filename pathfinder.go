@@ -16,6 +16,18 @@ type ImageSet struct {
 	fileSchema                     Schema
 }
 
+var defaultImageSet = ImageSet{
+	satelliteLayers: []string{"MODIS_Terra_correctedReflectance_TrueColor"},
+	latMin:          "28.505126953125",
+	latMax:          "29.700439453125",
+	lonMin:          "82.00634765625",
+	lonMax:          "83.6982421875",
+	width:           "385",
+	height:          "272",
+	dates:           []Date{Date{2018, 01, 29}},
+	imageType:       "jpeg",
+	fileSchema:      DefaultScheme{"./img/"}}
+
 // struct that represents individual image
 type Image struct {
 	satelliteLayer                 string // full layer name? or satellite name?
@@ -27,17 +39,25 @@ type Image struct {
 }
 
 // get Images from ImageSet; pipe them back through a channel
-func (iSet ImageSet) getImages(ichannel chan<- Image) {
-	for i := 0; i < 10; i++ {
-		ichannel <- Image{}
+func (iSet *ImageSet) getImages(ichannel chan<- Image) {
+	img := Image{parent: iSet}
+
+	// not sure whether to fit these in here, or iterate over them, or just call
+	// them from the parent pointer later. Copying them in for now
+	img.latMin, img.latMax, img.lonMin, img.lonMax =
+		iSet.latMin, iSet.latMax, iSet.lonMin, iSet.lonMax
+	img.width, img.height = iSet.width, iSet.height
+	img.imageType = iSet.imageType
+
+	for _, d := range iSet.dates {
+		for _, s := range iSet.satelliteLayers {
+			img.time = d
+			img.satelliteLayer = s
+			ichannel <- img
+		}
 	}
 	close(ichannel)
 }
-
-// Defaults for image fetching
-const (
-	iurl = "https://gibs.earthdata.nasa.gov.wms.epsg4326/best/wms.cgi"
-)
 
 var i1 = Image{
 	satelliteLayer: "MODIS_Terra_correctedReflectance_TrueColor",
@@ -51,7 +71,7 @@ var i1 = Image{
 	imageType:      "jpeg"}
 
 // Method to take image struct and give URL
-func (i Image) getImageURL() url.URL {
+func (i *Image) getImageURL() url.URL {
 
 	query := make(url.Values)
 	query.Add("SERVICE", "WMS")
@@ -72,6 +92,7 @@ func (i Image) getImageURL() url.URL {
 }
 
 // Method to take image struct and give filepath
-func (i Image) getImagePath() string {
-	return "testimg.jpg"
+func (i *Image) getImagePath() string {
+	return i.parent.fileSchema.makeFilePath(i) +
+		i.parent.fileSchema.makeFileName(i)
 }

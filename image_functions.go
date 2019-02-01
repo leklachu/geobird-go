@@ -33,7 +33,7 @@ func saveImage(img io.ReadCloser, fileName string) {
 // Merging functions to one: because the deferred HTTP close closes the stream
 // before a new function can access it atm, and these functions are always
 // going to be piped together
-func getAndSaveImage(url string, fileName string) {
+func getAndSaveImage(url string, filePath string) {
 
 	// Open the HTTPS stream to get the image
 	resp, err := http.Get(url)
@@ -49,7 +49,7 @@ func getAndSaveImage(url string, fileName string) {
 	}
 
 	// and write it
-	outputPath := fileName //filepath.Join(outputDir, fileName)
+	outputPath := filePath
 	err = ioutil.WriteFile(outputPath, imgBytes, 0644)
 	if err != nil {
 		panic(err)
