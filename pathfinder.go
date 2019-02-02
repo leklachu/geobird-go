@@ -58,17 +58,6 @@ func (iSet *ImageSet) getImages(ichannel chan<- Image) {
 	close(ichannel)
 }
 
-var i1 = Image{
-	satelliteLayer: "MODIS_Terra_correctedReflectance_TrueColor",
-	latMin:         "28.505126953125",
-	latMax:         "29.700439453125",
-	lonMin:         "82.00634765625",
-	lonMax:         "83.6982421875",
-	width:          "385",
-	height:         "272",
-	time:           Date{2018, 01, 29},
-	imageType:      "jpeg"}
-
 // Method to take image struct and give URL
 func (i *Image) getImageURL() url.URL {
 

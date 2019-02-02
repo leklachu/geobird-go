@@ -13,6 +13,7 @@ type OptionGroup struct {
 	satelliteLayers string
 	// TODO how to denote multilayer within image? currently each layer is
 	// separate image
+	// TODO have rawlayer; also easy layer selection
 	startDate string
 	endDate   string
 	interval  string
@@ -23,6 +24,9 @@ type OptionGroup struct {
 	imageType   string
 	// TODO would be neat to be able to take a minimal set of
 	// lat+long+size[+res] or lat/long*2[+res] and calculate
+	schema string
+
+	// TODO also need a dry-run option
 }
 
 // Parse the command line and put details into an OptionGroup
@@ -33,6 +37,9 @@ func parseCommandLineArguments() *OptionGroup {
 	// Output dir and schema (not implemented)
 	pflag.StringVarP(&options.outputDir,
 		"output-dir", "o", ".", "The directory to output the image files into")
+	pflag.StringVarP(&options.schema,
+		"schema", "k", "",
+		"Schematic for filenaming, currently 'default' (y/m/d[layer].ext) or 'one' (y-m-d[l].ext")
 
 	// Satellite image layers
 	pflag.StringVarP(&options.satelliteLayers,
@@ -55,7 +62,7 @@ func parseCommandLineArguments() *OptionGroup {
 
 	// image type
 	pflag.StringVarP(&options.imageType,
-		"format", "f", "", "Image format, accepts jpeg or png")
+		"format", "f", "jpeg", "Image format, accepts jpeg or png")
 
 	pflag.Parse()
 
@@ -69,9 +76,16 @@ func parseCommandLineArguments() *OptionGroup {
 // more versatile as a single thing.)
 func prepImageSet(o *OptionGroup) ImageSet {
 	imageSet := defaultImageSet
-	if o.outputDir != "" {
+
+	switch o.schema {
+	case "default":
 		imageSet.fileSchema = DefaultScheme{o.outputDir}
+	case "one":
+		imageSet.fileSchema = OneFolderScheme{o.outputDir}
+	default:
+		panic("invalid file schema")
 	}
+
 	if o.satelliteLayers != "" {
 		imageSet.satelliteLayers = strings.Split(o.satelliteLayers, ",")
 	}
@@ -89,18 +103,18 @@ func prepImageSet(o *OptionGroup) ImageSet {
 	if o.size != "" {
 		imageSet.width, imageSet.height = readSize(o.size)
 	}
-	if o.imageType != "" {
-		switch o.imageType {
-		case "jpeg":
-			imageSet.imageType = "jpeg"
-		case "jpg":
-			imageSet.imageType = "jpeg"
-		case "png":
-			imageSet.imageType = "png"
-		default:
-			panic("invalid image type")
-		}
+
+	switch o.imageType {
+	case "jpeg":
+		imageSet.imageType = "jpeg"
+	case "jpg":
+		imageSet.imageType = "jpeg"
+	case "png":
+		imageSet.imageType = "png"
+	default:
+		panic("invalid image type")
 	}
+
 	return imageSet
 }
 
