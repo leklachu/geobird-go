@@ -28,8 +28,9 @@ func main() {
 	for img := range iChannel {
 		iURL = img.getImageURL()
 		fmt.Println("getting", iURL.String())
-		fmt.Println("and putting at", img.getImagePath())
-		getAndSaveImage(iURL.String(), img.getImagePath())
+		iDir, iName := img.getImagePath()
+		fmt.Println("and putting at", iDir+iName)
+		getAndSaveImage(iURL.String(), iDir, iName)
 	}
 
 	// u := i1.getImageURL()

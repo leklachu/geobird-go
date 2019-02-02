@@ -1,7 +1,10 @@
 // Schematics for file naming
 package main
 
-import "strconv"
+import (
+	"fmt"
+	// "strconv"
+)
 
 // Interface for choosing a filename from an Image
 type Schema interface {
@@ -16,16 +19,20 @@ type DefaultScheme struct {
 
 func (_ DefaultScheme) makeFileName(i *Image) string {
 	ext := i.imageType
+	satL := i.satelliteLayer
 	switch ext {
 	case "jpeg":
 		ext = "jpg"
 	}
-	return strconv.Itoa(i.time.day) + i.satelliteLayer + "." + ext
+	switch satL {
+	case "MODIS_Terra_correctedReflectance_TrueColor":
+		satL = ""
+	}
+	return fmt.Sprintf("%02d", i.time.day) + satL + "." + ext
 }
 
-//TODO need to pad month and day! (also above)
 func (s DefaultScheme) makeFilePath(i *Image) string {
 	//TODO should check for / in prefix before doubling; doesn't really matter?
-	return s.prefix + "/" + strconv.Itoa(i.time.year) + "/" +
-		strconv.Itoa(i.time.month) + "/"
+	return s.prefix + "/" + fmt.Sprintf("%02d", i.time.year) + "/" +
+		fmt.Sprintf("%02d", i.time.month) + "/"
 }

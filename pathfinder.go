@@ -3,7 +3,6 @@ package main
 
 import (
 	"net/url"
-	// "strconv"
 )
 
 // a struct with all the parameters
@@ -92,7 +91,7 @@ func (i *Image) getImageURL() url.URL {
 }
 
 // Method to take image struct and give filepath
-func (i *Image) getImagePath() string {
-	return i.parent.fileSchema.makeFilePath(i) +
+func (i *Image) getImagePath() (dir, file string) {
+	return i.parent.fileSchema.makeFilePath(i),
 		i.parent.fileSchema.makeFileName(i)
 }

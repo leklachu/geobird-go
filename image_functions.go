@@ -4,6 +4,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 // Given an image URL, return a pointer to the image
@@ -33,7 +34,7 @@ func saveImage(img io.ReadCloser, fileName string) {
 // Merging functions to one: because the deferred HTTP close closes the stream
 // before a new function can access it atm, and these functions are always
 // going to be piped together
-func getAndSaveImage(url string, filePath string) {
+func getAndSaveImage(url string, filePath string, fileName string) {
 
 	// Open the HTTPS stream to get the image
 	resp, err := http.Get(url)
@@ -49,7 +50,11 @@ func getAndSaveImage(url string, filePath string) {
 	}
 
 	// and write it
-	outputPath := filePath
+	outputPath := filePath + fileName
+	err = os.MkdirAll(filePath, 0755)
+	if err != nil {
+		panic(err)
+	}
 	err = ioutil.WriteFile(outputPath, imgBytes, 0644)
 	if err != nil {
 		panic(err)
