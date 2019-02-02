@@ -1,7 +1,11 @@
 // Simple date handling
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
 
 // simple struct and functions for date only: time is irrelevant
 // days/months start from 1, not 0
@@ -93,4 +97,46 @@ func postpone(date Date, interval Period) Date {
 	}
 
 	return date
+}
+
+// Read dates and periods from strings
+func readDate(date string) Date {
+	ds := strings.Split(date, "-")
+	var y, m, d int
+	var err error
+
+	if len(ds) != 3 {
+		panic("so, is that a date?")
+	}
+	if y, err = strconv.Atoi(ds[0]); err != nil {
+		panic(err)
+	}
+	if m, err = strconv.Atoi(ds[1]); err != nil {
+		panic(err)
+	}
+	if d, err = strconv.Atoi(ds[2]); err != nil {
+		panic(err)
+	}
+
+	return Date{y, m, d}
+}
+func readPeriod(period string) Period {
+	ds := strings.Split(period, "-")
+	var y, m, d int
+	var err error
+
+	if len(ds) != 3 {
+		panic("so, is that a date?")
+	}
+	if y, err = strconv.Atoi(ds[0]); err != nil {
+		panic(err)
+	}
+	if m, err = strconv.Atoi(ds[1]); err != nil {
+		panic(err)
+	}
+	if d, err = strconv.Atoi(ds[2]); err != nil {
+		panic(err)
+	}
+
+	return Period{y, m, d}
 }
