@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // simple struct and functions for date only: time is irrelevant
@@ -100,7 +101,20 @@ func postpone(date Date, interval Period) Date {
 }
 
 // Read dates and periods from strings
+// Including 'today', 'yesterday'
 func readDate(date string) Date {
+
+	// first check for special dates
+	switch date {
+	case "today":
+		y, m, d := (time.Now()).Date()
+		return Date{y, int(m), d}
+	case "yesterday":
+		// <time.Time>.addDate(0,0,-1)
+		y, m, d := ((time.Now()).AddDate(0, 0, -1)).Date()
+		return Date{y, int(m), d}
+	}
+
 	ds := strings.Split(date, "-")
 	var y, m, d int
 	var err error

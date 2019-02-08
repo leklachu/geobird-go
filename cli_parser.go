@@ -26,7 +26,9 @@ type OptionGroup struct {
 	// lat+long+size[+res] or lat/long*2[+res] and calculate
 	schema string
 
-	// TODO also need a dry-run option
+	// TODO implement these
+	verbosity string
+	dryRun    string
 }
 
 // Parse the command line and put details into an OptionGroup
