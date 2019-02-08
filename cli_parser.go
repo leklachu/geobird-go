@@ -27,8 +27,8 @@ type OptionGroup struct {
 	schema string
 
 	// TODO implement these
-	verbosity string
-	dryRun    string
+	verbosity int
+	dryRun    bool
 }
 
 // Parse the command line and put details into an OptionGroup
@@ -65,6 +65,12 @@ func parseCommandLineArguments() *OptionGroup {
 	// image type
 	pflag.StringVarP(&options.imageType,
 		"format", "f", "jpeg", "Image format, accepts jpeg or png")
+
+	// Verbosity and dry-run
+	pflag.CountVarP(&options.verbosity,
+		"verbose", "v", "Verbosity, from nothing to -vvv (TODO)")
+	pflag.BoolVarP(&options.dryRun,
+		"dry-run", "n", false, "Show urls/filepaths (with -vv) but don't actually get and save images")
 
 	pflag.Parse()
 

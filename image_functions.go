@@ -38,12 +38,9 @@ func getAndSaveImage(url string, filePath string, fileName string) error {
 
 	var err error
 	outputPath := filePath + fileName
-	// 1. Check if the file already exists
-	if _, err = os.Stat(outputPath); !os.IsNotExist(err) {
-		return os.ErrExist
-	}
+	// 0. Check if the file already exists (moved to main)
 
-	// 2. Open the HTTPS stream to get the image
+	// 1. Open the HTTPS stream to get the image
 	var resp *http.Response
 	resp, err = http.Get(url)
 	if err != nil {
@@ -51,19 +48,19 @@ func getAndSaveImage(url string, filePath string, fileName string) error {
 	}
 	defer resp.Body.Close()
 
-	// 3. Get the body ready to write
+	// 2. Get the body ready to write
 	var imgBytes []byte
 	imgBytes, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
 
-	// 4a. Make the directory if not already there
+	// 3a. Make the directory if not already there
 	err = os.MkdirAll(filePath, 0755)
 	if err != nil {
 		return err
 	}
-	// 4b. write the file
+	// 3b. write the file
 	err = ioutil.WriteFile(outputPath, imgBytes, 0644)
 	if err != nil {
 		return err
