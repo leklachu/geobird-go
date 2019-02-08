@@ -38,7 +38,7 @@ func parseCommandLineArguments() *OptionGroup {
 	pflag.StringVarP(&options.outputDir,
 		"output-dir", "o", ".", "The directory to output the image files into")
 	pflag.StringVarP(&options.schema,
-		"schema", "k", "",
+		"schema", "k", "default",
 		"Schematic for filenaming, currently 'default' (y/m/d[layer].ext) or 'one' (y-m-d[l].ext")
 
 	// Satellite image layers

@@ -1,3 +1,3 @@
 Major TODOs
 
-set up inputs to set date range etc
+don't get images if already exist (or rename)
