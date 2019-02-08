@@ -1,3 +1,7 @@
 Major TODOs
 
-don't get images if already exist (or rename)
+
+Feature TODOs
+- catch no-image response and don't write file.
+- assess image for quality
+

@@ -34,30 +34,41 @@ func saveImage(img io.ReadCloser, fileName string) {
 // Merging functions to one: because the deferred HTTP close closes the stream
 // before a new function can access it atm, and these functions are always
 // going to be piped together
-func getAndSaveImage(url string, filePath string, fileName string) {
+func getAndSaveImage(url string, filePath string, fileName string) error {
 
-	// Open the HTTPS stream to get the image
-	resp, err := http.Get(url)
+	var err error
+	outputPath := filePath + fileName
+	// 1. Check if the file already exists
+	if _, err = os.Stat(outputPath); !os.IsNotExist(err) {
+		return os.ErrExist
+	}
+
+	// 2. Open the HTTPS stream to get the image
+	var resp *http.Response
+	resp, err = http.Get(url)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer resp.Body.Close()
 
-	// Get the body ready to write
-	imgBytes, err := ioutil.ReadAll(resp.Body)
+	// 3. Get the body ready to write
+	var imgBytes []byte
+	imgBytes, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	// and write it
-	outputPath := filePath + fileName
+	// 4a. Make the directory if not already there
 	err = os.MkdirAll(filePath, 0755)
 	if err != nil {
-		panic(err)
+		return err
 	}
+	// 4b. write the file
 	err = ioutil.WriteFile(outputPath, imgBytes, 0644)
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 
 }
